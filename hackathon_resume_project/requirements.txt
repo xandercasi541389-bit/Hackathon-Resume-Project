@@ -1,0 +1,4 @@
+openai>=1.40
+httpx2  # HTTP client used by eventsearch (also an openai 3.x dependency)
+python-dotenv>=1.0
+pytest>=8.0

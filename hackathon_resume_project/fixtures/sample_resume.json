@@ -1,0 +1,9 @@
+{
+  "education": [{"degree": "Software Engineering", "institution": "FGCU"}],
+  "skills": ["Python", "C++", "SQL", "Git"],
+  "experience": [{"role": "Warehouse Associate", "description": "Worked with SAP warehouse operations and robotic automation."}],
+  "projects": [
+    {"name": "AI Assistant", "description": "Developed an AI-powered assistant."},
+    {"name": "Inventory Tracker", "description": "Built a SQL-backed inventory tracking tool."}
+  ]
+}
