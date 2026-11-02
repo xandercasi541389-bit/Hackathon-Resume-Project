@@ -104,7 +104,8 @@ def test_resume_nulls_and_extra_keys():
     r = load_resume({"skills": ["Go"], "education": None, "projects": None, "gpa": 3.9,
                      "experience": [{"role": "Dev", "company": "X", "description": None}]})
     assert r.extra == {"gpa": 3.9}
-    assert r.experience[0].extra == {"company": "X"}
+    assert r.experience[0].company == "X"
+    assert r.experience[0].extra == {}
     assert r.experience[0].description == ""
 
 
@@ -181,3 +182,61 @@ def test_deeply_nested_json_string_is_validation_error():
 def test_nul_byte_path_is_validation_error():
     with pytest.raises(ValidationError):
         load_resume("bad\x00path.json")
+
+
+# --- C++ resume parser output (keys follow Resume.h) --------------------------
+
+CPP = FIXTURES / "sample_resume_cpp.json"
+
+
+def test_cpp_output_maps_struct_fields():
+    r = load_resume(CPP)
+    assert "Python" in r.skills and "C++" in r.skills
+    e = r.education[0]
+    assert (e.institution, e.degree, e.major) == (
+        "Florida Gulf Coast University", "Bachelor of Science", "Software Engineering")
+    assert e.graduation_date == "Expected May 2027"
+    x = r.experience[0]
+    assert (x.role, x.company, x.start_date, x.end_date) == (
+        "Warehouse Associate", "Amazon Fulfillment", "Jun 2024", "Present")
+    assert any("SAP" in item for item in x.responsibilities)
+    assert r.projects[0].technologies == ["Python", "OpenAI API", "Flask"]
+    assert r.certifications == ["CompTIA A+", "AWS Certified Cloud Practitioner"]
+    assert r.summary.startswith("Software engineering student")
+
+
+def test_cpp_personal_details_never_reach_prompt():
+    r = load_resume(CPP)
+    for key in ("name", "email", "phone", "location", "fileName"):
+        assert key in r.extra
+        value = r.extra[key]
+        assert value and value not in r.to_prompt_text()
+
+
+def test_cpp_prompt_text_and_keywords():
+    r = load_resume(CPP)
+    text = r.to_prompt_text()
+    assert "Warehouse Associate at Amazon Fulfillment (Jun 2024 - Present)" in text
+    assert "  * Operated SAP warehouse management workflows" in text
+    assert "Bachelor of Science in Software Engineering" in text
+    assert "Certifications: CompTIA A+" in text
+    kw = r.keywords()
+    for term in ("software engineering", "flask", "sqlite", "comptia a+", "warehouse associate"):
+        assert term in kw
+
+
+def test_cpp_json_from_stdout_string():
+    r = load_resume(CPP.read_text(encoding="utf-8"))
+    assert r.experience[1].company == "FGCU Information Technology Services"
+
+
+def test_cpp_position_preferred_and_role_still_supported():
+    r = load_resume({"experience": [{"position": "Intern", "role": "Old"}, {"role": "Dev"}]})
+    assert [x.role for x in r.experience] == ["Intern", "Dev"]
+
+
+def test_cpp_list_fields_validated():
+    with pytest.raises(ValidationError, match=r"experience\[0\].*responsibilities"):
+        load_resume({"experience": [{"responsibilities": "not a list"}]})
+    with pytest.raises(ValidationError, match="certifications"):
+        load_resume({"skills": ["a"], "certifications": "AWS"})

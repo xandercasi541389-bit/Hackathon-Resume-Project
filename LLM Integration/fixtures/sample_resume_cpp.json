@@ -1,0 +1,72 @@
+{
+  "fileName": "sample_resume.pdf",
+  "name": "Jordan Rivera",
+  "email": "jordan.rivera@example.com",
+  "phone": "(239) 555-0142",
+  "location": "Fort Myers, FL",
+  "summary": "Software engineering student interested in healthcare technology and automation. Comfortable building data-driven tools and explaining technical work to non-technical teams.",
+  "skills": [
+    "Python",
+    "C++",
+    "SQL",
+    "JavaScript",
+    "Git",
+    "Linux",
+    "SAP",
+    "Docker"
+  ],
+  "education": [
+    {
+      "institution": "Florida Gulf Coast University",
+      "degree": "Bachelor of Science",
+      "major": "Software Engineering",
+      "graduationDate": "Expected May 2027"
+    }
+  ],
+  "experience": [
+    {
+      "company": "Amazon Fulfillment",
+      "position": "Warehouse Associate",
+      "startDate": "Jun 2024",
+      "endDate": "Present",
+      "responsibilities": [
+        "Operated SAP warehouse management workflows for inbound and outbound inventory",
+        "Worked alongside robotic automation systems and reported equipment faults",
+        "Trained four new associates on scanning and safety procedures"
+      ]
+    },
+    {
+      "company": "FGCU Information Technology Services",
+      "position": "IT Help Desk Assistant",
+      "startDate": "Aug 2023",
+      "endDate": "May 2024",
+      "responsibilities": [
+        "Resolved hardware and account issues for students and staff",
+        "Documented recurring problems in the ticketing knowledge base"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "AI Study Assistant",
+      "description": "Built a chatbot that generates practice questions from lecture notes",
+      "technologies": [
+        "Python",
+        "OpenAI API",
+        "Flask"
+      ]
+    },
+    {
+      "name": "Inventory Tracker",
+      "description": "Command-line tool that tracks stock levels and flags low inventory",
+      "technologies": [
+        "C++",
+        "SQLite"
+      ]
+    }
+  ],
+  "certifications": [
+    "CompTIA A+",
+    "AWS Certified Cloud Practitioner"
+  ]
+}
