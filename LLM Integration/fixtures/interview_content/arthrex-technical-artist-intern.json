@@ -1,0 +1,52 @@
+{
+  "job_id": "arthrex-technical-artist-intern",
+  "company_facts": [
+    "Arthrex describes itself as a leader in new product development and medical education in orthopedics (https://careers.arthrex.com/NorthAmerica/job/Naples-Technical-Artist-Intern-FL-34108/1373642157/)",
+    "Internship runs January-April 2027 in Naples, FL, minimum 25 hours/week, on the Medical Visualization team (https://careers.arthrex.com/NorthAmerica/job/Naples-Technical-Artist-Intern-FL-34108/1373642157/)",
+    "Benefits listed include medical insurance, onsite clinics, complimentary lunch and wellness center access (https://careers.arthrex.com/NorthAmerica/job/Naples-Technical-Artist-Intern-FL-34108/1373642157/)"
+  ],
+  "mission_and_values": [
+    "Tagline: 'Helping Surgeons Treat Their Patients Better' (https://careers.arthrex.com/NorthAmerica/job/Naples-Technical-Artist-Intern-FL-34108/1373642157/)",
+    "Focus on new product development and medical education in orthopedics (https://careers.arthrex.com/NorthAmerica/job/Naples-Technical-Artist-Intern-FL-34108/1373642157/)"
+  ],
+  "technical_topics": [
+    "creating 3D assets, textures and materials for anatomical models",
+    "shader development for real-time rendering in Unity and Unreal Engine",
+    "managing and optimizing 3D asset libraries",
+    "evaluating emerging VR/AR technologies",
+    "automation scripting and programming for art pipelines",
+    "3D mathematics (vectors, matrices, transforms)",
+    "CAD proficiency and tools such as Maya, Visual Studio",
+    "software testing of interactive experiences"
+  ],
+  "hr_topics": [
+    "collaborating across teams on interactive visualization projects",
+    "why medical visualization and why Arthrex",
+    "learning new tools quickly",
+    "managing a part-time internship schedule (25+ hours/week) alongside final semester",
+    "bridging software engineering skills with a creative team"
+  ],
+  "technical_questions": [
+    "Walk me through how a vertex shader differs from a fragment/pixel shader. What would you use each for on an anatomical model?",
+    "You have a 3D model with millions of polygons that must run smoothly in VR. How would you optimize it?",
+    "What is a transformation matrix, and how do you combine rotation, scale and translation?",
+    "Describe how you would write a script to batch-process a library of 3D assets (rename, validate, export).",
+    "What experience do you have with Unity or Unreal Engine, even in class or personal projects?",
+    "How would you test an interactive VR/AR experience for bugs?",
+    "Explain the difference between a texture, a material and a shader.",
+    "Tell me about a Python or C++ project you built and how you debugged it."
+  ],
+  "hr_questions": [
+    "Why do you want to intern at Arthrex, and what draws you to medical visualization?",
+    "How does your work connect to the idea of helping surgeons treat patients better?",
+    "Tell me about a time you worked with people from a different discipline than yours.",
+    "Describe a time you had to learn a new tool or technology quickly.",
+    "Tell me about a time you received critical feedback and how you responded.",
+    "How would you balance a 25-hour work week with your final semester of classes?",
+    "Where do you see yourself after graduating in May 2027?"
+  ],
+  "sources": [
+    "https://careers.arthrex.com/NorthAmerica/job/Naples-Technical-Artist-Intern-FL-34108/1373642157/"
+  ],
+  "_about": "Research notes curated 2026-11-02 from the job posting; facts carry their source URL."
+}
