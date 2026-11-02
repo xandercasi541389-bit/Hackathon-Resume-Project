@@ -219,3 +219,40 @@ def test_llm_error_mid_interview_continues_with_standard_questions(monkeypatch, 
     assert TECHNICAL_QUESTIONS[0] in captured.out
     assert "Score: 10/10" in captured.out
     assert "Interview ended early" not in captured.out
+
+
+# -- demo command ---------------------------------------------------------------------------
+
+def test_demo_offline_runs_all_steps(monkeypatch, capsys):
+    script_input(monkeypatch, [LONG_ANSWER, LONG_ANSWER])  # technical answers; HR then hits EOF
+    assert main.main(["demo", "--offline", "--no-pause", "--type", "technical"]) == 0
+    out = capsys.readouterr().out
+    for n in range(1, 5):
+        assert f"Step {n}/4" in out
+    assert '"skills"' in out                       # step 1 printed the parser JSON
+    assert "Employers at matching events: Arthrex" in out
+    assert "Technical interview: Technical Artist Intern at Arthrex" in out  # best internship
+    assert "Score:" in out
+
+
+def test_demo_falls_back_when_parser_missing(monkeypatch, tmp_path, capsys):
+    monkeypatch.setattr(main, "PARSER_DIR", tmp_path)  # no resume_parser binary here
+    script_input(monkeypatch, [])
+    assert main.main(["demo", "--offline", "--no-pause", "--type", "hr", "--questions", "1"]) == 0
+    captured = capsys.readouterr()
+    assert "C++ parser not built" in captured.err
+    assert "sample_resume_cpp.json" in captured.err
+    assert "Step 4/4" in captured.out
+
+
+def test_demo_fast_skips_rerank_and_runs_technical_only(monkeypatch, capsys):
+    called = []
+    monkeypatch.setattr(main, "rerank_with_llm", lambda *a, **k: called.append(1))
+    client = FakeClient(["Fake question?", FEEDBACK])
+    monkeypatch.setattr(main, "LLMClient", lambda: client)
+    monkeypatch.setattr(main, "load_events", lambda live, snapshot: (main.load_events_file(snapshot), "snapshot"))
+    script_input(monkeypatch, [LONG_ANSWER])
+    assert main.main(["demo", "--fast", "--no-pause", "--questions", "1"]) == 0
+    out = capsys.readouterr().out
+    assert not called
+    assert "Technical interview:" in out and "HR / personal interview:" not in out

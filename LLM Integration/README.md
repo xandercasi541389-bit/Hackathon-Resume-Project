@@ -18,6 +18,18 @@ cp .env.example .env   # then set NRP_API_KEY; .env is git-ignored
 | `NRP_MODEL` | `gpt-oss` | Any id from `LLMClient().list_models()`; never switched automatically |
 | `NRP_TIMEOUT` / `NRP_MAX_RETRIES` | `120` / `2` | Per-request timeout (s) and SDK retries |
 
+## Presentation demo (one command)
+```bash
+.venv/bin/python main.py demo                 # full flow, pauses for Enter between the 4 steps
+.venv/bin/python main.py demo --fast          # no AI reranking, technical interview only (~30 s on gpt-oss)
+.venv/bin/python main.py demo --offline       # no network at all: saved events, standard questions
+.venv/bin/python main.py demo --resume-file path/to/resume.docx --type hr --questions 3 --no-pause
+```
+Steps: parse the resume file with the C++ parser (`make` in `../Resume Parser` first; falls back to
+the saved parser output if it isn't built) -> matching FGCU events -> jobs at those employers ->
+mock interview for the best-matching internship (or `--job <id>`). The parsed JSON is written to a
+temporary folder and deleted afterwards. For speed set `NRP_MODEL=gpt-oss` and `NRP_TIMEOUT=120` in `.env`.
+
 ## Demo: events matching a resume
 ```bash
 .venv/bin/python main.py events                       # sample resume + saved EagleLink snapshot

@@ -4,12 +4,15 @@
   python main.py jobs   [--resume PATH] [--live] [--top N] [--json]
   python main.py interview [--resume PATH] [--job ID] [--type technical|hr|both]
                            [--questions N] [--offline] [--live]
+  python main.py demo   [--resume-file PDF|DOCX|TXT] [--fast] [--offline] [--no-pause]
 
 `events` ranks EagleLink events for a resume analysis (the C++ module's JSON).
 `jobs` finds the employers named in those events and ranks their (curated, real)
 job and internship postings against the resume.
 `interview` runs an interactive mock interview (Technical and/or HR) for one of
 those postings and prints a feedback report. Type `quit` to stop early.
+`demo` runs the whole flow for a presentation: parse a resume file with the C++
+parser, then events, jobs and a short interview.
 Without --live both read the saved snapshot in fixtures/; with --live they query
 EagleLink once (small, cached) and tell you if they have to use the snapshot instead.
 """
@@ -18,7 +21,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
+import tempfile
 import textwrap
 from datetime import datetime
 from pathlib import Path
@@ -32,6 +37,7 @@ from jobs import JobDataError, load_jobs, match_jobs
 
 APP_NAME = "Hackathon Resume Project"
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
+PARSER_DIR = Path(__file__).resolve().parent.parent / "Resume Parser"
 
 
 def banner(title: str) -> None:
@@ -321,6 +327,90 @@ def cmd_interview(args) -> int:
     return 0
 
 
+def step(number: int, title: str, pause: bool) -> None:
+    if pause and number > 1:
+        try:
+            input(f"\n[Press Enter for step {number}: {title}] ")
+        except EOFError:
+            pass
+    print(f"\n{'#' * 72}\n#  Step {number}/4: {title}\n{'#' * 72}\n")
+
+
+def parse_resume_file(path: Path, out: Path) -> bool:
+    """Run the C++ parser on a resume file, writing its JSON to `out`."""
+    binary = PARSER_DIR / "resume_parser"
+    if not binary.exists():
+        warn(f"C++ parser not built ({binary}); run `make` in '{PARSER_DIR}'.")
+        return False
+    try:
+        result = subprocess.run([str(binary), str(path)], capture_output=True, text=True, timeout=60)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        warn(f"Resume parser failed: {exc}")
+        return False
+    if result.returncode != 0:
+        warn(f"Resume parser failed: {result.stderr.strip()}")
+        return False
+    out.write_text(result.stdout, encoding="utf-8")
+    return True
+
+
+def demo_job_id(resume, live: bool, snapshot: Path) -> str | None:
+    """The best-matching internship (else the best posting) for the interview step."""
+    matches, _, _ = find_jobs(resume, live, snapshot, top_n=10)
+    for m in matches:
+        if m.job.type == "internship":
+            return m.job.id
+    return matches[0].job.id if matches else None
+
+
+def cmd_demo(args) -> int:
+    live = not args.offline
+    pause = not args.no_pause
+    banner(f"{APP_NAME}: demo")
+    print("Resume file -> C++ parser -> FGCU events -> jobs -> mock interview")
+    if args.fast:
+        print("(--fast: no AI event reranking; one technical interview)")
+    if args.offline:
+        print("(--offline: saved events and standard interview questions; no network)")
+
+    with tempfile.TemporaryDirectory() as tmp:  # parsed JSON has personal details: never kept
+        resume_json = Path(tmp) / "resume.json"
+        step(1, "Parse the resume (C++ module)", pause)
+        print(f"Resume file: {args.resume_file}\n")
+        if parse_resume_file(args.resume_file, resume_json):
+            print(resume_json.read_text(encoding="utf-8"))
+        else:
+            fallback = FIXTURES / "sample_resume_cpp.json"
+            warn(f"Using the saved parser output {fallback.name} instead.")
+            resume_json.write_text(fallback.read_text(encoding="utf-8"), encoding="utf-8")
+        try:
+            resume = load_resume(resume_json)
+        except ValidationError as exc:
+            warn(f"Resume JSON is invalid: {exc}")
+            return 2
+
+        common = {"resume": str(resume_json), "snapshot": FIXTURES / "sample_events.json", "live": live}
+        step(2, "Find matching FGCU events (EagleLink)", pause)
+        cmd_events(argparse.Namespace(**common, rerank=not (args.fast or args.offline), top=args.top,
+                                      json=False))
+
+        step(3, "Find jobs at employers from those events", pause)
+        cmd_jobs(argparse.Namespace(**common, top=args.top, json=False))
+
+        step(4, "Mock interview", pause)
+        try:
+            job_id = args.job or demo_job_id(resume, live, common["snapshot"])
+        except (EventSearchError, JobDataError) as exc:
+            warn(str(exc))
+            return 1
+        if not job_id:
+            warn("No posting to interview for.")
+            return 1
+        kind = "technical" if args.fast else args.type
+        return cmd_interview(argparse.Namespace(**common, job=job_id, type=kind,
+                                                questions=args.questions, offline=args.offline))
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=f"{APP_NAME}: AI integration demo")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -359,6 +449,22 @@ def main(argv: list[str] | None = None) -> int:
     interview.add_argument("--offline", action="store_true",
                            help="No LLM: standard questions and basic length-based scoring")
     interview.set_defaults(func=cmd_interview)
+
+    demo = sub.add_parser("demo", help="Run the whole flow for a presentation")
+    demo.add_argument("--resume-file", type=Path, default=PARSER_DIR / "samples" / "sample_resume.pdf",
+                      help="Resume file (.pdf/.docx/.txt) for the C++ parser (default: sample PDF)")
+    demo.add_argument("--job", help="Posting id for the interview (default: best-matching internship)")
+    demo.add_argument("--type", choices=["technical", "hr", "both"], default="both",
+                      help="Interview(s) to run (default: both)")
+    demo.add_argument("--questions", type=int, default=2, choices=range(1, 11), metavar="N",
+                      help="Questions per interview (default 2)")
+    demo.add_argument("--top", type=int, default=5, help="Events and postings to show (default 5)")
+    demo.add_argument("--fast", action="store_true",
+                      help="Quicker: no AI event reranking and a technical interview only")
+    demo.add_argument("--offline", action="store_true",
+                      help="No network: saved events, standard questions, basic scoring")
+    demo.add_argument("--no-pause", action="store_true", help="Don't wait for Enter between steps")
+    demo.set_defaults(func=cmd_demo)
     args = parser.parse_args(argv)
     return args.func(args)
 
