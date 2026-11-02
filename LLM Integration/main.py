@@ -102,7 +102,7 @@ def main(argv: list[str] | None = None) -> int:
                         help="Saved EagleLink response used offline")
     events.add_argument("--live", action="store_true", help="Query EagleLink live (cached, polite)")
     events.add_argument("--rerank", action="store_true", help="Re-score top matches with the LLM")
-    events.add_argument("--top", type=int, default=10, help="Number of events to show")
+    events.add_argument("--top", type=int, default=5, help="Number of events to show")
     events.add_argument("--json", action="store_true", help="Print JSON instead of text")
     events.set_defaults(func=cmd_events)
     args = parser.parse_args(argv)
