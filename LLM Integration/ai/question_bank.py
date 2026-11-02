@@ -29,14 +29,20 @@ def questions_for(kind: str) -> list[str]:
     return list(TECHNICAL_QUESTIONS if kind == "technical" else HR_QUESTIONS)
 
 
-def offline_evaluation(answers: list[str]) -> dict:
+def offline_evaluation(answers: list[str], question_count: int = 5, kind: str = "technical") -> dict:
     """InterviewSession::evaluateInterview(): 2 points for answers over 100 characters,
-    1 point over 50. Returns the C++ InterviewResult fields."""
-    score = sum(2 if len(a) > 100 else 1 if len(a) > 50 else 0 for a in answers)
+    1 point over 50. Returns the C++ InterviewResult fields.
+
+    The C++ class always asks 5 questions (max 10 points); for other counts the score is
+    scaled to 0-10 so it means the same thing. weakAreas is the C++ value for technical
+    interviews and a behavioral equivalent for HR."""
+    raw = sum(2 if len(a) > 100 else 1 if len(a) > 50 else 0 for a in answers)
+    score = min(10, int(raw * 10 / (2 * max(question_count, 1)) + 0.5))  # round half up
     if score >= 8:
         feedback = "Excellent interview performance."
     elif score >= 5:
         feedback = "Good performance with room for improvement."
     else:
         feedback = "Consider practicing technical explanations."
-    return {"totalScore": score, "overallFeedback": feedback, "weakAreas": ["Technical Communication"]}
+    weak = "Technical Communication" if kind == "technical" else "Detailed, specific examples"
+    return {"totalScore": score, "overallFeedback": feedback, "weakAreas": [weak]}

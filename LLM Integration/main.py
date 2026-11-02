@@ -2,10 +2,14 @@
 
   python main.py events [--resume PATH] [--live] [--rerank] [--top N] [--json]
   python main.py jobs   [--resume PATH] [--live] [--top N] [--json]
+  python main.py interview [--resume PATH] [--job ID] [--type technical|hr|both]
+                           [--questions N] [--offline] [--live]
 
 `events` ranks EagleLink events for a resume analysis (the C++ module's JSON).
 `jobs` finds the employers named in those events and ranks their (curated, real)
 job and internship postings against the resume.
+`interview` runs an interactive mock interview (Technical and/or HR) for one of
+those postings and prints a feedback report. Type `quit` to stop early.
 Without --live both read the saved snapshot in fixtures/; with --live they query
 EagleLink once (small, cached) and tell you if they have to use the snapshot instead.
 """
@@ -15,13 +19,15 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import textwrap
 from datetime import datetime
 from pathlib import Path
 
 from ai import ConfigError, LLMClient, LLMError
 from eventsearch import match_events, rerank_with_llm
 from eventsearch.eaglelink_client import EagleLinkClient, EventSearchError, load_events_file
-from integration import ValidationError, load_company, load_resume
+from ai.interview_engine import InterviewSession
+from integration import CompanyProfile, ValidationError, load_company, load_resume
 from jobs import JobDataError, load_jobs, match_jobs
 
 APP_NAME = "Hackathon Resume Project"
@@ -168,6 +174,153 @@ def cmd_jobs(args) -> int:
     return 0
 
 
+QUIT_WORDS = {"quit", "exit", "q"}
+KIND_LABELS = {"technical": "Technical interview", "hr": "HR / personal interview"}
+
+
+def say(speaker: str, text: str) -> None:
+    print(f"\n{speaker}:")
+    print(textwrap.fill(text, width=72, initial_indent="  ", subsequent_indent="  "))
+
+
+def choose_job(matches):
+    """Ask which posting to interview for; returns a JobPosting or None."""
+    print("Postings at employers from your matching events:\n")
+    for i, m in enumerate(matches, 1):
+        kind = f" ({m.job.type})" if m.job.type else ""
+        print(f"  {i}. {m.job.title}{kind} - {m.job.company}  [{m.skill_match_percent:g}% skill match]")
+    while True:
+        try:
+            raw = input(f"\nChoose a posting [1-{len(matches)}]: ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            print()
+            return None
+        if raw in QUIT_WORDS:
+            return None
+        if raw.isdigit() and 1 <= int(raw) <= len(matches):
+            return matches[int(raw) - 1].job
+        print("Please enter one of the numbers above, or 'quit'.")
+
+
+def load_interview_content(job_id: str) -> dict | None:
+    path = FIXTURES / "interview_content" / f"{job_id}.json"
+    try:
+        return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+    except (OSError, ValueError) as exc:
+        warn(f"Ignoring interview notes {path.name}: {exc}")
+        return None
+
+
+def print_report(result: dict) -> None:
+    print(f"\nScore: {result.get('totalScore', 0)}/10")
+    if result.get("overallFeedback"):
+        say("Overall", result["overallFeedback"])
+    for key, title in (("strengths", "Strengths"), ("improvements", "Improvements"),
+                       ("recommendations", "Practice before the career fair"), ("weakAreas", "Weak areas")):
+        if result.get(key):
+            print(f"\n{title}:")
+            for item in result[key]:
+                print(textwrap.fill(item, width=72, initial_indent="  - ", subsequent_indent="    "))
+    for key in ("communication", "relevance", "examples"):
+        if result.get(key):
+            say(key.capitalize(), result[key])
+
+
+def run_interview(session: InterviewSession) -> bool:
+    """Ask questions until done or the student quits. Returns False if they quit."""
+    warned_offline = session.offline
+    while session.has_more_questions():
+        number = len(session.history) + 1
+        say(f"Recruiter (question {number}/{session.get_question_count()})", session.get_current_question())
+        try:
+            answer = input("\n> ")
+        except (EOFError, KeyboardInterrupt):
+            print()
+            return False
+        if answer.strip().lower() in QUIT_WORDS:
+            return False
+        if not session.offline and len(session.history) + 1 < session.get_question_count():
+            print("  (The recruiter is thinking...)")
+        try:
+            session.submit_answer(answer)
+        except KeyboardInterrupt:
+            print()
+            return False
+        if session.offline and not warned_offline:
+            warn(f"The LLM stopped responding ({session.llm_error}); continuing with standard questions.")
+            warned_offline = True
+    return True
+
+
+def cmd_interview(args) -> int:
+    try:
+        resume = load_resume(args.resume)
+    except ValidationError as exc:
+        warn(f"Resume JSON is invalid: {exc}")
+        return 2
+    try:
+        if args.job:
+            by_id = {j.id: j for j in load_jobs(FIXTURES / "jobs.json")}
+            if args.job not in by_id:
+                warn(f"Unknown job id {args.job!r}. Known ids: {', '.join(sorted(by_id))}")
+                return 2
+            job = by_id[args.job]
+        else:
+            matches, _, _ = find_jobs(resume, args.live, args.snapshot, top_n=5)
+            if not matches:
+                warn("No postings found to interview for.")
+                return 1
+            banner(APP_NAME)
+            job = choose_job(matches)
+            if job is None:
+                return 0
+    except (EventSearchError, JobDataError) as exc:
+        warn(str(exc))
+        return 1
+
+    company = load_company_profiles().get(job.company.lower()) or CompanyProfile(company_name=job.company)
+    content = load_interview_content(job.id)
+    client = None
+    if not args.offline:
+        try:
+            client = LLMClient()
+        except ConfigError as exc:
+            warn(f"{exc} Running offline with the standard questions.")
+
+    kinds = ["technical", "hr"] if args.type == "both" else [args.type]
+    for kind in kinds:
+        print(f"\n{'=' * 72}\n{KIND_LABELS[kind]}: {job.title} at {job.company}\n{'=' * 72}")
+        print("Answer in a few sentences and press Enter. Type 'quit' to stop.")
+        if client:
+            print("(The recruiter is thinking...)")
+        session = InterviewSession(company, resume, job, content, client, kind=kind,
+                                   max_questions=args.questions)
+        if session.offline and client:
+            warn(f"LLM unavailable ({session.llm_error}); using the standard questions.")
+        if session.offline:
+            print("(Offline: standard practice questions, not tailored to this posting or your resume.)")
+        finished = run_interview(session)
+        if session.history:
+            print("\nPreparing your feedback...")
+            try:
+                result = session.evaluate_interview()
+            except KeyboardInterrupt:
+                print("\nInterview ended early.")
+                break
+            basic = not result.get("strengths")
+            if basic and not session.offline:
+                warn(f"AI feedback unavailable ({session.llm_error}); showing the basic length-based score.")
+            print(f"\n--- Feedback: {KIND_LABELS[kind]} ---")
+            print(f"Answered {len(session.history)} of {session.get_question_count()} questions.")
+            if basic:
+                print("(Basic length-based score from the standard InterviewSession rules.)")
+            print_report(result)
+        if not finished:
+            print("\nInterview ended early.")
+            break
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=f"{APP_NAME}: AI integration demo")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -191,6 +344,21 @@ def main(argv: list[str] | None = None) -> int:
     jobs.add_argument("--top", type=int, default=5, help="Number of postings to show")
     jobs.add_argument("--json", action="store_true", help="Print JSON instead of text")
     jobs.set_defaults(func=cmd_jobs)
+
+    interview = sub.add_parser("interview", help="Interactive mock interview for a matched posting")
+    interview.add_argument("--resume", default=str(FIXTURES / "sample_resume.json"),
+                           help="Resume analysis JSON (C++ module output)")
+    interview.add_argument("--snapshot", type=Path, default=FIXTURES / "sample_events.json",
+                           help="Saved EagleLink response used offline")
+    interview.add_argument("--live", action="store_true", help="Query EagleLink live (cached, polite)")
+    interview.add_argument("--job", help="Posting id to skip the menu (see `main.py jobs`)")
+    interview.add_argument("--type", choices=["technical", "hr", "both"], default="both",
+                           help="Which interview(s) to run (default: both, technical first)")
+    interview.add_argument("--questions", type=int, default=5, choices=range(1, 11), metavar="N",
+                           help="Questions per interview, 1-10 (default 5)")
+    interview.add_argument("--offline", action="store_true",
+                           help="No LLM: standard questions and basic length-based scoring")
+    interview.set_defaults(func=cmd_interview)
     args = parser.parse_args(argv)
     return args.func(args)
 

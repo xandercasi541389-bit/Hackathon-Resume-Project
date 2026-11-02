@@ -20,6 +20,13 @@ from .feedback import FEEDBACK_KEYS, generate_feedback
 from .llm_client import LLMError
 
 KINDS = ("technical", "hr")
+_EMAIL = re.compile(r"[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,}")
+_PHONE = re.compile(r"(?:\+?1[\s.-]?)?(?:\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}\b")
+
+
+def scrub_contact(text: str) -> str:
+    """Remove emails/phone numbers a student may have typed into free-text resume fields."""
+    return _PHONE.sub("[phone removed]", _EMAIL.sub("[email removed]", text))
 
 
 def content_to_text(content: dict | None, kind: str) -> str:
@@ -61,7 +68,7 @@ class InterviewSession:
         self._messages = [
             {"role": "system", "content": prompts.recruiter_system_prompt(kind, company.company_name, job.title)},
             {"role": "user", "content": prompts.context_message(
-                company.to_prompt_text(), job.to_prompt_text(), resume.to_prompt_text(),
+                company.to_prompt_text(), job.to_prompt_text(), scrub_contact(resume.to_prompt_text()),
                 content_to_text(content, kind), self._bank[0], max_questions)},
         ]
         self._current = self._next_question()
@@ -110,12 +117,19 @@ class InterviewSession:
                 raise LLMError("The model returned an empty question.")
             except LLMError as exc:
                 self.offline, self.llm_error = True, str(exc)
-        question = self._bank[len(self.history) % len(self._bank)]
+        # First bank question not asked yet; only cycles if more questions than the bank holds.
+        asked = {q for q, _ in self.history} | {self._current_or_none()}
+        unused = [q for q in self._bank if q not in asked]
+        question = unused[0] if unused else self._bank[len(self.history) % len(self._bank)]
         self._messages.append({"role": "assistant", "content": question})
         return question
+
+    def _current_or_none(self):
+        return getattr(self, "_current", None)
 
     def _offline_result(self) -> dict:
         result = {key: [] for key in FEEDBACK_KEYS}
         result.update({"communication": "", "relevance": "", "examples": ""})
-        result.update(question_bank.offline_evaluation([a for _, a in self.history]))
+        result.update(question_bank.offline_evaluation([a for _, a in self.history],
+                                                       self.max_questions, self.kind))
         return result
