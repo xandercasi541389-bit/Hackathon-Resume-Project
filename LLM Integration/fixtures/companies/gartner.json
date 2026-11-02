@@ -1,0 +1,17 @@
+{
+  "company_name": "Gartner",
+  "industry": "Research and advisory (information technology)",
+  "description": "Research and advisory company serving business and technology leaders; headquartered in Stamford, CT, with a Fort Myers, FL office.",
+  "business_activities": [
+    "Research",
+    "Conferences",
+    "Consulting"
+  ],
+  "relevant_departments": [
+    "Client Engagement Services",
+    "Sales Operations",
+    "Account Executive / Sales",
+    "Software Engineering",
+    "Data Science"
+  ]
+}

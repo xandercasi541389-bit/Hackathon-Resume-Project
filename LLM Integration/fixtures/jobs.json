@@ -1,0 +1,154 @@
+{
+  "_about": "Real postings curated by hand on 2026-11-02 from employers named in FGCU EagleLink events (Arthrex, Gartner). Re-check links before relying on them; postings close.",
+  "jobs": [
+    {
+      "id": "arthrex-technical-artist-intern",
+      "title": "Technical Artist Intern",
+      "company": "Arthrex",
+      "type": "internship",
+      "location": "Naples, FL 34108",
+      "url": "https://careers.arthrex.com/NorthAmerica/job/Naples-Technical-Artist-Intern-FL-34108/1373642157/",
+      "retrieved_on": "2026-11-02",
+      "description": "Student internship (Jan-Apr 2027, minimum 25 hrs/week) on the Medical Visualization team. Work includes exploring VR/AR tech, building materials and shaders for anatomical 3D models, managing 3D asset libraries, and collaborating across teams on interactive experiences. Posted Oct 29, 2026.",
+      "required_skills": [
+        "CAD",
+        "Unity",
+        "Unreal Engine",
+        "Autodesk Maya",
+        "Visual Studio",
+        "Omniverse",
+        "Rider",
+        "Pixyz",
+        "3ds Max",
+        "programming",
+        "software testing",
+        "automation",
+        "scripting",
+        "3D mathematics",
+        "LLM training"
+      ],
+      "preferred_skills": [],
+      "url_checked": "2026-11-02: page title matches"
+    },
+    {
+      "id": "arthrex-rep-education-ops-analyst-intern",
+      "title": "Rep Education Operations Analyst Intern",
+      "company": "Arthrex",
+      "type": "internship",
+      "location": "Naples, FL 34108",
+      "url": "https://careers.arthrex.com/NorthAmerica/job/Naples-Rep-Education-Operations-Analyst-Intern-FL-34108/1373884257/",
+      "retrieved_on": "2026-11-02",
+      "description": "Student internship (Jan-Apr 2027, 20-30 hrs/week) supporting the Rep Education team with administrative coordination and data tasks: ticket support, instructor request workflows, dashboard data-quality audits, ordering supplies, and one operational improvement project. Posted Nov 2, 2026.",
+      "required_skills": [
+        "Microsoft Outlook",
+        "PowerPoint",
+        "Word",
+        "Excel",
+        "organization",
+        "attention to detail",
+        "time management",
+        "written communication",
+        "verbal communication",
+        "adaptability",
+        "problem-solving"
+      ],
+      "preferred_skills": [],
+      "url_checked": "2026-11-02: page title matches"
+    },
+    {
+      "id": "arthrex-lead-software-integration-developer",
+      "title": "Lead Software Integration Developer",
+      "company": "Arthrex",
+      "type": "full-time",
+      "location": "Naples, FL 34108",
+      "url": "https://careers.arthrex.com/NorthAmerica/job/Naples-Lead-Software-Integration-Developer-FL-34108/1373851357/",
+      "retrieved_on": "2026-11-02",
+      "description": "Senior IT role designing and building integration software with containerization and cloud deployment. Duties include maintaining Kubernetes apps, designing APIs and databases, code reviews, troubleshooting, mentoring junior developers and production support. Requires 8+ years experience, so it is a stretch for a new graduate (listed to show the employer's engineering stack). Posted Oct 31, 2026.",
+      "required_skills": [
+        "Golang",
+        "Scala",
+        "Java",
+        "Python",
+        "Node.js",
+        "Docker",
+        "Kubernetes",
+        "AWS",
+        "Azure",
+        "GCP",
+        "Kafka",
+        "NATS JetStream",
+        "API design",
+        "database design",
+        "Kustomize",
+        "Helm",
+        "TLS",
+        "event-driven architecture",
+        "integration patterns"
+      ],
+      "preferred_skills": [
+        "Grafana",
+        "networking",
+        "test-driven development",
+        "acceptance testing",
+        "domain-driven design",
+        "Agile",
+        "incident management",
+        "monitoring and alerting"
+      ],
+      "url_checked": "2026-11-02: page title matches"
+    },
+    {
+      "id": "gartner-client-engagement-services-specialist",
+      "title": "Client Engagement Services, Specialist",
+      "company": "Gartner",
+      "type": "full-time",
+      "location": "Irving, TX / Fort Myers, FL",
+      "url": "https://jobs.gartner.com/jobs/job/115466-client-engagement-services-specialist/",
+      "retrieved_on": "2026-11-02",
+      "description": "Client-services role connecting business and technology leaders with Gartner's analyst community. Involves interpreting client needs, routing requests to the right analysts, providing research and resources, and delivering executive-level customer service. Posting date not shown on page.",
+      "required_skills": [
+        "problem solving",
+        "time management",
+        "organization",
+        "analytical",
+        "business acumen",
+        "written communication",
+        "verbal communication"
+      ],
+      "preferred_skills": [
+        "Bachelor's degree",
+        "technology savvy",
+        "teamwork",
+        "self-starter",
+        "interest in business and technology"
+      ],
+      "url_checked": "2026-11-02: opened by research agent; automated check blocked by bot protection"
+    },
+    {
+      "id": "gartner-lead-qualification-specialist",
+      "title": "Lead Qualification Specialist",
+      "company": "Gartner",
+      "type": "full-time",
+      "location": "Fort Myers, FL",
+      "url": "https://jobs.gartner.com/jobs/job/112585-lead-qualification-specialist/",
+      "retrieved_on": "2026-11-02",
+      "description": "Sales-operations role qualifying inbound leads: email and phone outreach to director-level contacts, routing leads, preparing opportunity summaries for sales executives, and tracking activity in CRM. Posting date not shown on page.",
+      "required_skills": [
+        "1-2 years business experience",
+        "telephone sales",
+        "project management",
+        "Microsoft Office",
+        "Outlook",
+        "Word",
+        "Excel",
+        "written communication",
+        "verbal communication"
+      ],
+      "preferred_skills": [
+        "Bachelor's degree",
+        "information technology industry experience"
+      ],
+      "url_checked": "2026-11-02: opened by research agent; automated check blocked by bot protection"
+    }
+  ]
+}
