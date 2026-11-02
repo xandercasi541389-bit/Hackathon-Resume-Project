@@ -24,7 +24,9 @@ EXCLUDED_ONLY_CATEGORIES = ({"Community Service"},)
 # Single words too generic to signal a match on their own.
 STOPWORDS = {"and", "the", "for", "with", "of", "in", "on", "at", "to", "a", "an",
              "associate", "assistant", "student", "project", "development", "developer",
-             "science", "engineering", "management", "worker", "member", "intern"}
+             "science", "engineering", "management", "worker", "member", "intern",
+             "help", "desk", "services", "service", "support", "operations", "team", "study",
+             "certified", "tool", "tracker"}
 
 
 def _term_pattern(term: str) -> re.Pattern:

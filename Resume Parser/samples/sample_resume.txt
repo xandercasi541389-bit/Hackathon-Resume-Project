@@ -1,0 +1,35 @@
+Jordan Rivera
+Fort Myers, FL | (239) 555-0142 | jordan.rivera@example.com | linkedin.com/in/jordan-rivera-demo
+
+SUMMARY
+Software engineering student interested in healthcare technology and automation. Comfortable building
+data-driven tools and explaining technical work to non-technical teams.
+
+EDUCATION
+Florida Gulf Coast University, Fort Myers, FL
+Bachelor of Science in Software Engineering, Expected May 2027
+Relevant coursework: Data Structures, Databases, Software Testing
+
+TECHNICAL SKILLS
+Languages: Python, C++, SQL, JavaScript
+Tools: Git, Linux, SAP, Docker
+
+EXPERIENCE
+Warehouse Associate | Amazon Fulfillment | Jun 2024 – Present
+• Operated SAP warehouse management workflows for inbound and outbound inventory
+• Worked alongside robotic automation systems and reported equipment faults
+• Trained four new associates on scanning and safety procedures
+
+IT Help Desk Assistant, FGCU Information Technology Services
+Aug 2023 – May 2024
+• Resolved hardware and account issues for students and staff
+• Documented recurring problems in the ticketing knowledge base
+
+PROJECTS
+AI Study Assistant | Python, OpenAI API, Flask
+• Built a chatbot that generates practice questions from lecture notes
+Inventory Tracker (C++, SQLite)
+• Command-line tool that tracks stock levels and flags low inventory
+
+CERTIFICATIONS
+CompTIA A+; AWS Certified Cloud Practitioner

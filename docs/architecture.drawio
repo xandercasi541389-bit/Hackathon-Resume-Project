@@ -1,0 +1,99 @@
+<mxfile host="app.diagrams.net" agent="Claude Code" version="24.0.0">
+  <diagram id="arch-highlevel" name="High-level architecture">
+    <mxGraphModel dx="1280" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="640" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Hackathon Resume Project: resume to events, jobs and mock interview" style="text;html=1;align=left;verticalAlign=middle;fontSize=18;fontStyle=1;fontColor=#1F2937;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="900" height="36" as="geometry" />
+        </mxCell>
+
+        <!-- Lane A: C++ -->
+        <mxCell id="laneA" value="C++ resume analysis" style="swimlane;horizontal=1;startSize=28;rounded=0;fillColor=#EEF2FF;strokeColor=#6366F1;fontColor=#312E81;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="20" y="60" width="240" height="480" as="geometry" />
+        </mxCell>
+        <mxCell id="resumeFile" value="Resume file&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;PDF / DOCX / TXT&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6366F1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="110" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="parser" value="C++ Resume Parser&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;extracts skills, experience&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6366F1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="230" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="resumeJson" value="Resume.h JSON&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;ResumeAnalysis&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6366F1;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="350" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cppInterview" value="InterviewSession.cpp&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;original question bank + scoring&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6366F1;dashed=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="460" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Lane B: Python -->
+        <mxCell id="laneB" value="Python module: LLM Integration" style="swimlane;horizontal=1;startSize=28;rounded=0;fillColor=#ECFDF5;strokeColor=#059669;fontColor=#064E3B;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="300" y="60" width="560" height="480" as="geometry" />
+        </mxCell>
+        <mxCell id="cli" value="main.py CLI&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;events | jobs | interview&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#059669;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="100" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="gui" value="Streamlit GUI (planned)&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;demo front end&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#059669;dashed=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="620" y="100" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="jobs" value="jobs&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;match_jobs: rank postings by skills&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#059669;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="320" y="220" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="events" value="eventsearch&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;match_events: rank career events&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#059669;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="660" y="220" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="fixtures" value="fixtures/&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;jobs.json, company profiles,&lt;br&gt;interview notes&lt;/font&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=8;fillColor=#FFFFFF;strokeColor=#059669;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="320" y="340" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="session" value="ai.InterviewSession&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;technical and HR interviews&lt;br&gt;ask, answer, evaluate&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#059669;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="340" width="280" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="bank" value="ai.question_bank&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;mirrors InterviewSession.cpp&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#059669;dashed=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="320" y="460" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="llm" value="ai.LLMClient&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;prompts: no name, email, phone&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#059669;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="600" y="460" width="240" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Lane C: External -->
+        <mxCell id="laneC" value="External services" style="swimlane;horizontal=1;startSize=28;rounded=0;fillColor=#FFF7ED;strokeColor=#EA580C;fontColor=#7C2D12;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="900" y="180" width="300" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="eagle" value="EagleLink&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;FGCU career events&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EA580C;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="920" y="220" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="report" value="Score + feedback report&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;shown to the student&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EA580C;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="920" y="350" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="nrp" value="NRP LLM API&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;gpt-oss, OpenAI-compatible&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EA580C;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="920" y="460" width="260" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeColor=#374151;" edge="1" parent="1" source="resumeFile" target="parser"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeColor=#374151;" edge="1" parent="1" source="parser" target="resumeJson"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" value="--resume" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeColor=#374151;fontSize=11;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="resumeJson" target="cli"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="280" y="380" /><mxPoint x="280" y="130" /></Array></mxGeometry></mxCell>
+        <mxCell id="e4" value="ports to" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;dashed=1;strokeColor=#6B7280;fontSize=11;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="cppInterview" target="bank"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="e5" value="events" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeColor=#374151;fontSize=11;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="cli" target="events"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="450" y="190" /><mxPoint x="750" y="190" /></Array></mxGeometry></mxCell>
+        <mxCell id="e6" value="jobs, interview" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeColor=#374151;fontSize=11;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="cli" target="jobs"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="410" y="190" /><mxPoint x="410" y="250" /></Array></mxGeometry></mxCell>
+        <mxCell id="e7" value="same functions" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;dashed=1;strokeColor=#6B7280;fontSize=11;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="gui" target="cli"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="e8" value="events (live or snapshot)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeColor=#374151;fontSize=11;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="eagle" target="events"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e9" value="employers at events" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeColor=#374151;fontSize=11;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="events" target="jobs"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e10" value="postings" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeColor=#374151;fontSize=11;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="fixtures" target="jobs"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e11" value="company + notes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeColor=#374151;fontSize=11;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="fixtures" target="session"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e12" value="chosen posting" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeColor=#374151;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;entryX=0.25;entryY=0;" edge="1" parent="1" source="jobs" target="session"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e13" value="questions, feedback prompts" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeColor=#374151;fontSize=11;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="session" target="llm"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e14" value="offline or LLM error" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;dashed=1;strokeColor=#6B7280;fontSize=11;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="session" target="bank"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="580" y="440" /><mxPoint x="420" y="440" /></Array></mxGeometry></mxCell>
+        <mxCell id="e15" value="HTTPS chat" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeColor=#374151;fontSize=11;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="llm" target="nrp"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e16" value="score + feedback" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;strokeColor=#374151;fontSize=11;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="session" target="report"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="Solid arrow: main data flow.  Dashed: fallback, port or planned." style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#6B7280;" vertex="1" parent="1">
+          <mxGeometry x="20" y="550" width="500" height="24" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

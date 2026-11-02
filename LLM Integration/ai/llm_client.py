@@ -32,7 +32,7 @@ class LLMConfig:
     api_key: str
     base_url: str = DEFAULT_BASE_URL
     model: str = DEFAULT_MODEL
-    timeout: float = 60.0
+    timeout: float = 120.0
     max_retries: int = 2
 
     def __repr__(self) -> str:  # never leak the key in logs/tracebacks
@@ -52,7 +52,7 @@ def load_config(env_file: str | os.PathLike | None = ENV_FILE) -> LLMConfig:
         raise ConfigError(
             "NRP_API_KEY is not set. Copy .env.example to .env and add your key.")
     try:
-        timeout = float(os.getenv("NRP_TIMEOUT", "60"))
+        timeout = float(os.getenv("NRP_TIMEOUT", "120"))
         max_retries = int(os.getenv("NRP_MAX_RETRIES", "2"))
     except ValueError as exc:
         raise ConfigError(f"NRP_TIMEOUT / NRP_MAX_RETRIES must be numbers: {exc}") from exc
